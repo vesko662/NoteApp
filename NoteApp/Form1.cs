@@ -16,9 +16,11 @@ namespace NoteApp
     public partial class NoteApp : Form
     {
         DataTable data;
+        string filepath = "storage.json";
         public NoteApp()
         {
             InitializeComponent();
+            
         }
 
         private void NoteApp_Load(object sender, EventArgs e)
@@ -48,7 +50,7 @@ namespace NoteApp
 
             var json = JsonConvert.SerializeObject(notesToSave);
 
-            using (var file = File.Open("storage.json", FileMode.Create))
+            using (var file = File.Open(filepath, FileMode.Create))
             {
                 StreamWriter x = new StreamWriter(file);
                 x.WriteLine(json);
@@ -60,22 +62,11 @@ namespace NoteApp
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(Title.Text) && string.IsNullOrEmpty(NoteText.Text) ) 
-            {
-                MessageBox
-               .Show("Note cannot be save whitout title and text!", "Saving note error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            else if (string.IsNullOrEmpty(Title.Text))
-            {
-                MessageBox
-              .Show("Note without a title cannot be saved!", "Saving note error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            else
+            if (IsEmpyChecker())
             {
                 data.Rows.Add(Title.Text, NoteText.Text);
                 ClearTextArea();
             }
-
         }
         private void LoadNote_Click(object sender, EventArgs e)
         {
@@ -115,7 +106,7 @@ namespace NoteApp
         {
             string json =string.Empty;
 
-            using (var file = File.Open("storage.json",FileMode.OpenOrCreate))
+            using (var file = File.Open(filepath, FileMode.OpenOrCreate))
             {
                 StreamReader x = new StreamReader(file);
                 json= x.ReadToEnd();
@@ -131,6 +122,25 @@ namespace NoteApp
                     data.Rows.Add(note.Title, note.Text);
                 }
             }
+        }
+        private bool IsEmpyChecker()
+        {
+            if (string.IsNullOrEmpty(Title.Text) && string.IsNullOrEmpty(NoteText.Text))
+            {
+                MessageBox
+               .Show("Note cannot be save whitout title and text!", "Saving note error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                return false;
+            }
+            else if (string.IsNullOrEmpty(Title.Text))
+            {
+                MessageBox
+              .Show("Note without a title cannot be saved!", "Saving note error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                return false;
+            }
+
+            return true;
         }
     }
 }
