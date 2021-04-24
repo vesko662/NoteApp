@@ -21,13 +21,6 @@ namespace NoteApp
             InitializeComponent();
         }
 
-        private void SaveButton_Click(object sender, EventArgs e)
-        {
-            data.Rows.Add(Title.Text, NoteText.Text);
-
-            ClearTextArea();
-        }
-
         private void NoteApp_Load(object sender, EventArgs e)
         {
             data = new DataTable();
@@ -38,11 +31,71 @@ namespace NoteApp
             LoadData();
 
             ClearTextArea();
-            
+
             dataGridView1.DataSource = data;
             dataGridView1.Columns["Text"].Visible = false;
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            var notesToSave = new List<Note>();
+
+            foreach (DataRow rowData in data.Rows)
+            {
+                var note = new Note(rowData.ItemArray[0].ToString(), rowData.ItemArray[1].ToString());
+                notesToSave.Add(note);
+            }
+            var json = JsonConvert.SerializeObject(notesToSave);
+
+            using (var file = File.Open("../../../storage.json",FileMode.Create))
+            {
+                StreamWriter x = new StreamWriter(file);
+                x.WriteLine(json);
+                x.Close();
+            }
+            base.OnClosed(e);
+        }
+
+        private void SaveButton_Click(object sender, EventArgs e)
+        {
+            data.Rows.Add(Title.Text, NoteText.Text);
+
+            ClearTextArea();
+        }
+        private void LoadNote_Click(object sender, EventArgs e)
+        {
+            int index = CurrentIndexFromDataGridView();
+
+            if (index >= 0)
+            {
+                Title.Text = data.Rows[index].ItemArray[0].ToString();
+                NoteText.Text = data.Rows[index].ItemArray[1].ToString();
+            }
+        }
+        private void DeleteNote_Click(object sender, EventArgs e)
+        {
+            int index = CurrentIndexFromDataGridView();
+
+            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+            DialogResult result =
+                MessageBox
+                .Show("Do you want to delete the note?", "Delete note", buttons, MessageBoxIcon.Warning);
+
+            if (result == DialogResult.Yes)
+            {
+                data.Rows[index].Delete();
+            }
+
+        }
+        private void ClearTextArea()
+        {
+            Title.Text = string.Empty;
+            NoteText.Text = string.Empty;
+        }
+        private int CurrentIndexFromDataGridView()
+        {
+            return dataGridView1.CurrentCell.RowIndex;
+        }
         private void LoadData()
         {
             string json = File.ReadAllText("../../../storage.json");
@@ -56,43 +109,6 @@ namespace NoteApp
                     data.Rows.Add(note.Title, note.Text);
                 }
             }
-        }
-
-        private void LoadNote_Click(object sender, EventArgs e)
-        {
-            int index = CurrentIndexFromDataGridView();
-
-            if (index>=0)
-            {
-                Title.Text = data.Rows[index].ItemArray[0].ToString();
-                NoteText.Text = data.Rows[index].ItemArray[1].ToString();
-            }
-        }
-
-        private void DeleteNote_Click(object sender, EventArgs e)
-        {
-            int index  = CurrentIndexFromDataGridView();
-
-            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-            DialogResult result =
-                MessageBox
-                .Show("Do you want to delete the note?", "Delete note", buttons,MessageBoxIcon.Warning);
-
-            if (result == DialogResult.Yes)
-            {
-                data.Rows[index].Delete();
-            }
-            
-        }
-        private void ClearTextArea()
-        {
-            Title.Text = string.Empty;
-            NoteText.Text = string.Empty;
-        }
-
-        private int CurrentIndexFromDataGridView()
-        {
-            return  dataGridView1.CurrentCell.RowIndex;
         }
     }
 }
