@@ -29,16 +29,16 @@ namespace NoteApp
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NoteApp));
             this.Title = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.NoteText = new System.Windows.Forms.RichTextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.SaveButton = new System.Windows.Forms.Button();
-            this.NoteShower = new System.Windows.Forms.DataGridView();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.LoadNote = new System.Windows.Forms.Button();
             this.DeleteNote = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.NoteShower)).BeginInit();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // Title
@@ -84,30 +84,7 @@ namespace NoteApp
             this.SaveButton.TabIndex = 4;
             this.SaveButton.Text = "Save";
             this.SaveButton.UseVisualStyleBackColor = true;
-            // 
-            // NoteShower
-            // 
-            this.NoteShower.AllowUserToAddRows = false;
-            this.NoteShower.AllowUserToDeleteRows = false;
-            this.NoteShower.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.NoteShower.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dataGridViewTextBoxColumn1});
-            this.NoteShower.Location = new System.Drawing.Point(437, 80);
-            this.NoteShower.Name = "NoteShower";
-            this.NoteShower.ReadOnly = true;
-            this.NoteShower.RowHeadersVisible = false;
-            this.NoteShower.RowHeadersWidth = 51;
-            this.NoteShower.RowTemplate.Height = 29;
-            this.NoteShower.Size = new System.Drawing.Size(216, 225);
-            this.NoteShower.TabIndex = 5;
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewTextBoxColumn1.HeaderText = "Title";
-            this.dataGridViewTextBoxColumn1.MinimumWidth = 6;
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.ReadOnly = true;
+            this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
             // 
             // LoadNote
             // 
@@ -117,6 +94,7 @@ namespace NoteApp
             this.LoadNote.TabIndex = 6;
             this.LoadNote.Text = "Load";
             this.LoadNote.UseVisualStyleBackColor = true;
+            this.LoadNote.Click += new System.EventHandler(this.LoadNote_Click);
             // 
             // DeleteNote
             // 
@@ -126,23 +104,43 @@ namespace NoteApp
             this.DeleteNote.TabIndex = 7;
             this.DeleteNote.Text = "Delete";
             this.DeleteNote.UseVisualStyleBackColor = true;
+            this.DeleteNote.Click += new System.EventHandler(this.DeleteNote_Click);
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.AllowUserToResizeColumns = false;
+            this.dataGridView1.AllowUserToResizeRows = false;
+            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Location = new System.Drawing.Point(437, 80);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.RowHeadersVisible = false;
+            this.dataGridView1.RowHeadersWidth = 51;
+            this.dataGridView1.RowTemplate.Height = 29;
+            this.dataGridView1.Size = new System.Drawing.Size(216, 225);
+            this.dataGridView1.TabIndex = 8;
             // 
             // NoteApp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(764, 450);
+            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.DeleteNote);
             this.Controls.Add(this.LoadNote);
-            this.Controls.Add(this.NoteShower);
             this.Controls.Add(this.SaveButton);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.NoteText);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.Title);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "NoteApp";
             this.Text = "NoteApp";
-            ((System.ComponentModel.ISupportInitialize)(this.NoteShower)).EndInit();
+            this.Load += new System.EventHandler(this.NoteApp_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -155,10 +153,9 @@ namespace NoteApp
         private System.Windows.Forms.RichTextBox NoteText;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button SaveButton;
-        private System.Windows.Forms.DataGridView NoteShower;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private System.Windows.Forms.Button LoadNote;
         private System.Windows.Forms.Button DeleteNote;
+        private System.Windows.Forms.DataGridView dataGridView1;
     }
 }
 

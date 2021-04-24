@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using NoteApp.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,10 +15,84 @@ namespace NoteApp
 {
     public partial class NoteApp : Form
     {
+        DataTable data;
         public NoteApp()
         {
             InitializeComponent();
         }
 
+        private void SaveButton_Click(object sender, EventArgs e)
+        {
+            data.Rows.Add(Title.Text, NoteText.Text);
+
+            ClearTextArea();
+        }
+
+        private void NoteApp_Load(object sender, EventArgs e)
+        {
+            data = new DataTable();
+
+            data.Columns.Add("Title", typeof(string));
+            data.Columns.Add("Text", typeof(string));
+
+            LoadData();
+
+            ClearTextArea();
+            
+            dataGridView1.DataSource = data;
+            dataGridView1.Columns["Text"].Visible = false;
+        }
+
+        private void LoadData()
+        {
+            string json = File.ReadAllText("../../../storage.json");
+
+            if (!string.IsNullOrEmpty(json))
+            {
+                var notes = JsonConvert.DeserializeObject<List<Note>>(json);
+
+                foreach (var note in notes)
+                {
+                    data.Rows.Add(note.Title, note.Text);
+                }
+            }
+        }
+
+        private void LoadNote_Click(object sender, EventArgs e)
+        {
+            int index = CurrentIndexFromDataGridView();
+
+            if (index>=0)
+            {
+                Title.Text = data.Rows[index].ItemArray[0].ToString();
+                NoteText.Text = data.Rows[index].ItemArray[1].ToString();
+            }
+        }
+
+        private void DeleteNote_Click(object sender, EventArgs e)
+        {
+            int index  = CurrentIndexFromDataGridView();
+
+            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+            DialogResult result =
+                MessageBox
+                .Show("Do you want to delete the note?", "Delete note", buttons,MessageBoxIcon.Warning);
+
+            if (result == DialogResult.Yes)
+            {
+                data.Rows[index].Delete();
+            }
+            
+        }
+        private void ClearTextArea()
+        {
+            Title.Text = string.Empty;
+            NoteText.Text = string.Empty;
+        }
+
+        private int CurrentIndexFromDataGridView()
+        {
+            return  dataGridView1.CurrentCell.RowIndex;
+        }
     }
 }
