@@ -45,22 +45,37 @@ namespace NoteApp
                 var note = new Note(rowData.ItemArray[0].ToString(), rowData.ItemArray[1].ToString());
                 notesToSave.Add(note);
             }
+
             var json = JsonConvert.SerializeObject(notesToSave);
 
-            using (var file = File.Open("../../../storage.json",FileMode.Create))
+            using (var file = File.Open("storage.json", FileMode.Create))
             {
                 StreamWriter x = new StreamWriter(file);
                 x.WriteLine(json);
                 x.Close();
             }
+
             base.OnClosed(e);
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            data.Rows.Add(Title.Text, NoteText.Text);
+            if (string.IsNullOrEmpty(Title.Text) && string.IsNullOrEmpty(NoteText.Text) ) 
+            {
+                MessageBox
+               .Show("Note cannot be save whitout title and text!", "Saving note error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else if (string.IsNullOrEmpty(Title.Text))
+            {
+                MessageBox
+              .Show("Note without a title cannot be saved!", "Saving note error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                data.Rows.Add(Title.Text, NoteText.Text);
+                ClearTextArea();
+            }
 
-            ClearTextArea();
         }
         private void LoadNote_Click(object sender, EventArgs e)
         {
@@ -98,7 +113,14 @@ namespace NoteApp
         }
         private void LoadData()
         {
-            string json = File.ReadAllText("../../../storage.json");
+            string json =string.Empty;
+
+            using (var file = File.Open("storage.json",FileMode.OpenOrCreate))
+            {
+                StreamReader x = new StreamReader(file);
+                json= x.ReadToEnd();
+                x.Close();
+            }
 
             if (!string.IsNullOrEmpty(json))
             {
